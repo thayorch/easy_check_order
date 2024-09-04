@@ -2,7 +2,7 @@
   <v-card
   title="Hello CS-67"
   class="text-center">
-  <h1>Hi!! CSCMU-Shop</h1>
+  <h1>Hello CSCMU-Shop</h1>
 </v-card>
 <table_component />
 

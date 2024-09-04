@@ -1,8 +1,8 @@
 <template>
-  <div class="bg-light-blue-darken-4">
+  <div class="bg-">
     <v-text-field
             v-model="search"
-            class="ma-2 text-light-blue-darken-4"
+            class="ma-2 text-"
             density="compact"
             placeholder="Search ID"
             hide-details
@@ -48,7 +48,7 @@ export default {
     itemsPerPage: 10,
     headers: [
       { title: "Students ID", align: "start", sortable: false, key: "id" },
-      { title: "Name", key: "name", align: "end" },
+      { title: "Name", key: "name", align: "start" },
       { title: "Shirt", key: "shirt", align: "end" },
       { title: "Polo", key: "polo", align: "end" },
       { title: "Status", key: "status", align: "end" },

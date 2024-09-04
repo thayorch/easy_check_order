@@ -1,8 +1,19 @@
 <template>
+  <div class="bg-light-blue-darken-4">
+    <v-text-field
+            v-model="search"
+            class="ma-2 text-light-blue-darken-4"
+            density="compact"
+            placeholder="Search ID"
+            hide-details
+  ></v-text-field>
+
+  </div>
+
   <v-data-table-server
     v-model:items-per-page="itemsPerPage"
     :headers="headers"
-    :items="serverItems"
+    :items="filteredItems"
     :items-length="totalItems"
     :loading="loading"
     :search="search"
@@ -19,23 +30,17 @@
       </v-btn>
     </template>
 
-    <template v-slot:tfoot>
+    <template v-slot:thead>
       <tr>
         <td>
-          <v-text-field
-            v-model="id"
-            class="ma-2"
-            density="compact"
-            placeholder="Search ID"
-            hide-details
-          ></v-text-field>
+
         </td>
       </tr>
     </template>
   </v-data-table-server>
 </template>
 
-<script>
+<script lang="ts">
 import axios from "axios";
 
 export default {
@@ -49,26 +54,51 @@ export default {
       { title: "Status", key: "status", align: "end" },
     ],
     serverItems: [],
+    filteredItems: [],
     loading: true,
     totalItems: 0,
     search: "",
   }),
+
+  watch: {
+    search() {
+      this.filterItems();
+    },
+  },
+
   methods: {
     async loadItems({ page, itemsPerPage }) {
       this.loading = true;
       try {
-        const response = await axios.get("http://localhost:3000/students");
-        this.serverItems = response.data.slice(
-          (page - 1) * itemsPerPage,
-          page * itemsPerPage
-        );
+        const response = await axios.get('http://localhost:3000/students', {
+          params: {
+            page,
+            itemsPerPage,
+            search: this.search,
+          },
+        });
+        this.serverItems = response.data;
         this.totalItems = response.data.length;
-        this.loading = false;
+        this.filterItems(); // Apply filtering after loading
       } catch (error) {
-        console.error("Error fetching students:", error);
+        console.error('Error fetching students:', error);
+      } finally {
         this.loading = false;
       }
     },
+
+    filterItems() {
+      if (!this.search) {
+        this.filteredItems = this.serverItems;
+      } else {
+        this.filteredItems = this.serverItems.filter(item =>
+          Object.values(item).some(value =>
+            String(value).toLowerCase().includes(this.search.toLowerCase())
+          )
+        );
+      }
+    },
+
     async toggleStatus(item) {
       try {
         await axios.put(`http://localhost:3000/students/${item.id}/status`, {
@@ -79,6 +109,10 @@ export default {
         console.error("Error updating status:", error);
       }
     },
+  },
+
+  mounted() {
+    this.loadItems({ page: 1, itemsPerPage: this.itemsPerPage });
   },
 };
 </script>

@@ -32,6 +32,24 @@ app.get('/students', (req, res) => {
     });
 });
 
+app.get('/logs', (req, res) => {
+  const query = 'SELECT * FROM `logs`';
+  db.query(query, (err, results) => {
+      if (err) throw err;
+      res.json(results);
+  });
+});
+// API to post logs
+
+app.post('/logs', (req, res)=>{
+  const query = `INSERT INTO logs (id, name, _status) VALUES (${req.body.id}, '${req.body.name}', ${req.body._status})` ;
+  db.query(query, (err) => {
+      if (err) throw err;
+      res.json({ message: 'Log pushed successfully' });
+  });
+});
+
+
 // API to update status
 app.put('/students/:id/status', (req, res) => {
     const studentId = req.params.id;

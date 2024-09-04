@@ -17,14 +17,13 @@
     :items-length="totalItems"
     :loading="loading"
     :search="search"
-    item-value="id"
     @update:options="loadItems"
   >
     <template v-slot:item.status="{ item }">
       <v-btn
         :color="item._status ? 'green' : 'red'"
         small
-        @click="toggleStatus(item)"
+        fixed
       >
         {{ item._status ? "Active" : "Inactive" }}
       </v-btn>
@@ -49,9 +48,8 @@ export default {
     headers: [
       { title: "Students ID", align: "start", sortable: false, key: "id" },
       { title: "Name", key: "name", align: "start" },
-      { title: "Shirt", key: "shirt", align: "end" },
-      { title: "Polo", key: "polo", align: "end" },
-      { title: "Status", key: "status", align: "end" },
+      { title: "Status", key: "status", align: "start" },
+      { title: "Timestamp", key: "TIMESTAMP", align: "start" },
     ],
     serverItems: [],
     filteredItems: [],
@@ -70,14 +68,14 @@ export default {
     async loadItems({ page, itemsPerPage }) {
       this.loading = true;
       try {
-        const response = await axios.get('http://localhost:3000/students', {
+        const response = await axios.get('http://localhost:3000/logs', {
           params: {
             page,
             itemsPerPage,
             search: this.search,
           },
         });
-        this.serverItems = response.data;
+        this.serverItems = response.data.reverse();
         this.totalItems = response.data.length;
         this.filterItems(); // Apply filtering after loading
       } catch (error) {
@@ -99,18 +97,6 @@ export default {
       }
     },
 
-    async toggleStatus(item) {
-      try {
-        await axios.put(`http://localhost:3000/students/${item.id}/status`, {
-          status: !item._status,
-        });
-        item._status = !item._status;
-        axios.post(`http://localhost:3000/logs/`,item)
-
-      } catch (error) {
-        console.error("Error updating status:", error);
-      }
-    },
   },
 
   mounted() {

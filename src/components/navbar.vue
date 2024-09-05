@@ -9,7 +9,7 @@
     <VListItem
         :active="false"
         class="py-2 logo"
-        prepend-avatar="/favicon.ico"
+        prepend-avatar="/public/CSCMU-LOGO.png"
         title="CSCMUSHOP"
         subtitle="@ Computer Science CMU"
         nav

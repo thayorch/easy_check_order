@@ -11,7 +11,7 @@
   </div>
 
   <v-data-table-server
-    v-model:items-per-page="itemsPerPage"
+    :v-model:items-per-page="itemsPerPage"
     :headers="headers"
     :items="filteredItems"
     :items-length="totalItems"
